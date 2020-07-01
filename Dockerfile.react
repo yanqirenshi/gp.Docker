@@ -1,0 +1,48 @@
+##### ################################################################
+#####
+#####    Base
+#####    ====
+#####      ???
+#####
+#####    Build
+#####    -----
+#####      docker build -t renshi/genisu.party.react -f Dockerfile.react .
+#####
+#####    Run
+#####    ---
+#####      docker run  -it -p renshi/genisu.party.react
+#####      docker run  -d  -p renshi/genisu.party.react
+#####      docker exec -it renshi/genisu.party.react /bin/bash
+#####
+##### ################################################################
+FROM nginx
+
+MAINTAINER Renshi <yanqirenshi@gmail.com>
+
+
+##### ################################################################
+#####   Group / User
+##### ################################################################
+USER root
+
+RUN groupadd appl-users
+RUN useradd -d /home/appl-user -m -g appl-users appl-user
+
+RUN apt-get update
+RUN apt-get -y install curl
+
+
+##### ################################################################
+#####   Node
+##### ################################################################
+USER appl-user
+WORKDIR /home/appl-user/
+
+RUN curl -L git.io/nodebrew | perl - setup
+
+RUN echo 'export PATH=$HOME/.nodebrew/current/bin:$PATH' >> ~/.profile
+
+ENV PATH /home/appl-user/.nodebrew/current/bin:$PATH
+
+RUN nodebrew install stable
+RUN nodebrew use stable
